@@ -6,7 +6,7 @@ from os import makedirs
 import pandas as pd
 
 
-class ProviderFTP(object):
+class ProviderFTP:
     """
     Provider FTP Class
     """    
@@ -45,7 +45,7 @@ class ProviderFTP(object):
         """
         Search the files to download
         """        
-        self.files = list(filter(lambda x: '.CSV' in x, self.ftp.nlst(self.download)))
+        self.files = list(filter(lambda x: '.CSV' in x.upper(), self.ftp.nlst(self.download)))
 
     def save_files(self):
         """
@@ -54,7 +54,7 @@ class ProviderFTP(object):
         
         makedirs(f'{self.dir_download}/{self.download}', exist_ok=True)
 
-        self.get_max_files()
+        self.get_files()
         
         print(f'Files to download: {self.files}', end='\n')
 
@@ -64,9 +64,8 @@ class ProviderFTP(object):
                 self.ftp.retrbinary('RETR /'+ file, r.write)
 
                 data = r.getvalue().decode()
-                f = open(f'{self.dir_download}/{file}' , 'w+')
-                f.write(data)
-                f.close()
+                with open(f'{self.dir_download}/{file}' , 'w+') as f:
+                    f.write(data)
             
                 r.close()
             except:
