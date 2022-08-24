@@ -1,12 +1,7 @@
-# export ml_lgbm_ENV=production
-
 from dotenv import load_dotenv
 from os import environ
 
-# environ['DB_ENV'] = 'development'
-
 load_dotenv()
-
 
 class DevelopmentConfig():
     __db = environ['DB_NAME']
@@ -30,10 +25,12 @@ class ProductionConfig():
     uri = f"postgresql://{__user}:{__password}@{__host}/{__db}"
 
 active_config = {
-    'development': DevelopmentConfig,
-    'testing' : TestingConfig,
-    'production': ProductionConfig
+    'development': DevelopmentConfig(),
+    'testing' : TestingConfig(),
+    'production': ProductionConfig()
 }
 
+# set enviroment variable
+environ['DB_ENV'] = 'development'
 active = environ['DB_ENV']
 CONFIG = active_config[active]

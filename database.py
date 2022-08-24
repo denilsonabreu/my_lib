@@ -5,18 +5,12 @@ import sqlalchemy
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy import schema, MetaData
 
-from config_exp import CONFIG
-
-"""
-https://towardsdatascience.com/how-to-create-a-sql-practice-database-with-python-d320908e1faf
-"""
-
 class SQLData:
     def __init__(self) -> None:
         return None
     
-    def connect(self) -> None:
-        self.__engine = sqlalchemy.create_engine(CONFIG.uri, isolation_level="AUTOCOMMIT")
+    def connect(self, url) -> None:
+        self.__engine = sqlalchemy.create_engine(url, isolation_level="AUTOCOMMIT")
         self.__meta = MetaData(bind=self.__engine, schema='dbo')
         self.create_database()
     
@@ -45,9 +39,3 @@ class SQLData:
                
     def get_table(self, name: str) -> None:
         return pd.read_sql(f'SELECT * FROM dbo.{name}', self.__engine, parse_dates='Date', index_col='Date')
-
-if __name__ == '__main__':
-    sql = SQLData()
-    sql.connect()
-    tables = sql.get_all_tables()
-    print(tables)
