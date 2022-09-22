@@ -1,36 +1,31 @@
+#!/usr/bin python3
+
 from dotenv import load_dotenv
-from os import environ
+from os import getenv
+from sqlalchemy.engine.url import make_url
 
 load_dotenv()
 
-class DevelopmentConfig():
-    __db = environ['DB_NAME']
-    __host = environ['DB_HOST_DEV']
-    __user = environ['DB_USER_DEV']
-    __password = environ['DB_PASSWORD_DEV']
-    uri = f"postgresql://{__user}:{__password}@{__host}/{__db}"
+class PostrgresConfig:
+    __db = getenv('DB_NAME')
+    __host = getenv('DB_HOST_POSTGRES')
+    __user = getenv('DB_USER_POSTGRES')
+    __password = getenv('DB_PASSWORD_POSTGRES')
+    url = make_url(f"postgresql+psycopg2://{__user}:{__password}@{__host}/{__db}")
 
-class TestingConfig():
-    __db = environ['DB_NAME']
-    __host = environ['DB_HOST_TEST']
-    __user = environ['DB_USER_TEST']
-    __password = environ['DB_PASSWORD_TEST']
-    uri = f"postgresql://{__user}:{__password}@{__host}/{__db}"
-
-class ProductionConfig():
-    __db = environ['DB_NAME']
-    __host = environ['DB_HOST_PROD']
-    __user = environ['DB_USER_PROD']
-    __password = environ['DB_PASSWORD_PROD']
-    uri = f"postgresql://{__user}:{__password}@{__host}/{__db}"
+class MySqlConfig:
+    __db = getenv('DB_NAME')
+    __host = getenv('DB_HOST_MYSQL')
+    __user = getenv('DB_USER_MYSQL')
+    __password = getenv('DB_PASSWORD_MYSQL')
+    url = make_url(f"mysql+pymysql://{__user}:{__password}@{__host}/{__db}")
 
 active_config = {
-    'development': DevelopmentConfig(),
-    'testing' : TestingConfig(),
-    'production': ProductionConfig()
+    'postgres': PostrgresConfig(),
+    'mysql' : MySqlConfig()
 }
 
 # set enviroment variable
-environ['DB_ENV'] = 'development'
-active = environ['DB_ENV']
-CONFIG = active_config[active]
+active = getenv('DB_ENV')
+
+cfg = active_config[active]

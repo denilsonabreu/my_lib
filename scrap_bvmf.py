@@ -11,9 +11,9 @@ def prepare_data(data):
     df.reset_index(inplace=True)
     df.rename(columns={'Part. (%)':'Part(%)', 'Código': 'index'}, inplace=True)
     df = df[['index','Part(%)']].T
-    df.insert(loc=0, column='date', value=['date',date])
+    df.insert(loc=0, column='Date', value=['Date',date])
     df.columns = df.iloc[0,:]
     df.drop(labels='index' , axis=0, inplace=True)
-    df.set_index('date', inplace=True)
+    df.set_index('Date', inplace=True)
 
     return df
