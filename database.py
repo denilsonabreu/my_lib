@@ -7,20 +7,15 @@ from sqlalchemy import schema, MetaData, create_engine
 class SQLData:
     """_summary_
     """    
-    def __init__(self) -> None:
-        """_summary_
-
-        Returns:
-            _type_: _description_
-        """        
-        return None
-    
-    def connect(self, url, schema: str=None) -> None:
+    def __init__(self, url, schema:str=None) -> None:
         """_summary_
 
         Args:
             url (_type_): _description_
             schema (str, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
         """        
         self.url = url
         if schema:
@@ -30,6 +25,7 @@ class SQLData:
         self.engine = create_engine(self.url, isolation_level="AUTOCOMMIT")
         self.meta = MetaData(bind=self.engine, schema=self.schema)
         self.create_database()
+        return None     
     
     def create_database(self) -> None:
         """_summary_
@@ -59,6 +55,10 @@ class SQLData:
             name (str): _description_
         """
         dataframe.to_sql(name, con=self.engine, schema=self.schema, index=False, if_exists='append')
+    
+    def drop_table(self, name:str) -> None:
+
+        self.engine.execute(f"DROP TABLE {name};")
 
     def get_all_tables(self) -> list:
         """_summary_
