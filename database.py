@@ -58,7 +58,7 @@ class SQLData:
     
     def drop_table(self, name:str) -> None:
 
-        self.engine.execute(f"DROP TABLE {name};")
+        self.engine.execute(f"DROP TABLE {self.schema}.{name};")
 
     def get_all_tables(self) -> list:
         """_summary_
