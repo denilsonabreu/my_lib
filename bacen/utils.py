@@ -76,9 +76,7 @@ class BCB:
 
             except:
                 df_temp = self.consulta_bc(value)
-                # pass
             
             df = pd.concat([df, df_temp], axis=1)
-            # df[f'{name}'] = df_temp.copy()
 
         return df
