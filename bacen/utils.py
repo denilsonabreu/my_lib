@@ -1,8 +1,9 @@
 import pandas as pd
 
 
-class BCB_SGS:
+class BCB:
     """_summary_
+    source: https://www3.bcb.gov.br/sgspub/
     """
 
     def __init__(self) -> None:
@@ -10,8 +11,8 @@ class BCB_SGS:
         """
         self.__name__ = 'BCB_SGS'
         self.codigos = {'selic': [11, 'taxa', 'a.d.'], 'selic_meta': [432, 'taxa', 'a.a.'], 'selic_am': [4390, 'taxa', 'a.m.'], 'cdi': [12, 'taxa', 'a.d.'],
-                        'patr_liq_ajus': [21430, 'unidades', 'milhoes'], 'patr_liq_med': [21841, 'unidades', 'milhoes'], 'vendas_var_br': [1455, 'indice'],
-                        'pib_cor_mes_br': [4380, 'unidades', 'milhoes'],'est_emprego_tot': [28763, 'unidades'], 'taxa_desocupacao': [24369, 'taxa', ''], 
+                        'patr_liq_ajus': [21430, 'unidades', 'milhoes'], 'patr_liq_med': [21841, 'unidades', 'milhoes'], 'vendas_var_br': [1455, 'indice', ''],
+                        'pib_cor_mes_br': [4380, 'unidades', 'milhoes'],'est_emprego_tot': [28763, 'unidades', ''], 'taxa_desocupacao': [24369, 'taxa', ''], 
                         'pessoas_idade_trab': [24370, 'unidades', 'mil'],'empregados_priv_pub': [24371, 'unidades', 'mil'], 'empregados_pub': [24372, 'unidades', 'mil'],
                         'empregados_proprio': [24373, 'unidades', 'mil'],'empregados_priv_com_car': [24375, 'unidades', 'mil'], 'empregados_priv_sem_car': [24376, 'unidades', 'mil'],
                         'empregados_privado_total': [24377, 'unidades', 'mil'], 'forca_trabalho': [24378, 'unidades', 'mil'], 'pessoas_ocupadas': [24379, 'unidades', 'mil'],
@@ -61,18 +62,23 @@ class BCB_SGS:
             codigos_dict = self.codigos
 
         for name, value in codigos_dict.items():
-            df_temp = self.consulta_bc(value[0])
-
+        
             try:
+                df_temp = self.consulta_bc(value[0])
                 if value[1] == 'taxa':
                     df_temp = df_temp / 100
                 elif (value[1] == 'unidades') & (value[2] == 'mil'):
                     df_temp = df_temp * 1000
                 elif (value[1] == 'unidades') & (value[2] == 'milhoes'):
                     df_temp = df_temp * 1000000
+                
+                df_temp.columns = [name]
 
             except:
-                pass
-            df[f'{name}'] = df_temp.copy()
+                df_temp = self.consulta_bc(value)
+                # pass
+            
+            df = pd.concat([df, df_temp], axis=1)
+            # df[f'{name}'] = df_temp.copy()
 
         return df
