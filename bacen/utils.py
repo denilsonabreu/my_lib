@@ -57,26 +57,37 @@ class BCB:
         Returns:
             pd.DataFrame: _description_
         """
-        df = pd.DataFrame()
-        if codigos_dict is None:
-            codigos_dict = self.codigos
-
-        for name, value in codigos_dict.items():
         
-            try:
-                df_temp = self.consulta_bc(value[0])
-                if value[1] == 'taxa':
-                    df_temp = df_temp / 100
-                elif (value[1] == 'unidades') & (value[2] == 'mil'):
-                    df_temp = df_temp * 1000
-                elif (value[1] == 'unidades') & (value[2] == 'milhoes'):
-                    df_temp = df_temp * 1000000
-                
-                df_temp.columns = [name]
+        unidades = list(set([x['unidades'] for x in codigos_dict]))
+        taxas = list(filter(lambda x: '%' in x, unidades))
+        mil = list(filter(lambda x: 'mil)' in x, unidades))
+        milhoes = list(filter(lambda x: 'milhões' in x, unidades))
+        
+        df = pd.DataFrame()
+        # dict_result = {}
 
+        if codigos_dict is None:
+            return None
+        
+        for cod in codigos_dict:
+            print(cod['codigo'], cod['nome'], sep=' - ')
+            try:
+                df_temp = self.consulta_bc(cod['codigo'])
+                if cod['unidades'] in taxas:
+                    df_temp = df_temp / 100
+
+                if cod['unidades'] in mil:
+                    df_temp = df_temp * 1000
+
+                if cod['unidades'] in milhoes:
+                    df_temp = df_temp * 1000000
+
+                df_temp.columns = [cod['nome']]
             except:
-                df_temp = self.consulta_bc(value)
+                df_temp = None
+                pass
             
+            # dict_result[cod['nome']] = df_temp
             df = pd.concat([df, df_temp], axis=1)
 
         return df
